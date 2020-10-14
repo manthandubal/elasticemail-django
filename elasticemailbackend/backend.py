@@ -34,9 +34,10 @@ class ElasticEmailBackend(BaseEmailBackend):
             return
 
         for email in email_messages:
-            mail = self._build_ee_mail(email)
+            mail, attachment_files = self._build_ee_mail(email)
+            print('Got some attach to send') if attachment_files else print('got no attachments to send')
             try:
-                self.api_client.send_email(mail)
+                self.api_client.send_email(mail, attachment_file=attachment_files)
                 count += 1
             except HTTPError as e:
                 if not self.fail_silently:
@@ -44,6 +45,8 @@ class ElasticEmailBackend(BaseEmailBackend):
         return count
 
     def _build_ee_mail(self,email):
+        # Get the attachments if any available in email
+        attachment = email.attachments
         mail = {}
         sender_name, sender_email = rfc822.parseaddr(email.from_email)
         if not sender_name:
@@ -75,5 +78,6 @@ class ElasticEmailBackend(BaseEmailBackend):
             mail['bodyHtml'] = email.body
         else:
             mail['bodyText'] = email.body
-        print mail
-        return mail
+        print (mail)
+        # Return Mail and Attachment from original Email
+        return mail, attachment
