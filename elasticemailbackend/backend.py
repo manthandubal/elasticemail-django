@@ -78,6 +78,6 @@ class ElasticEmailBackend(BaseEmailBackend):
             mail['bodyHtml'] = email.body
         else:
             mail['bodyText'] = email.body
-        print (mail)
+        # print (mail)
         # Return Mail and Attachment from original Email
         return mail, attachment
